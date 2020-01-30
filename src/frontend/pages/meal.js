@@ -73,7 +73,7 @@ function mealsId(req, router) {
    <li><strong>Max_Reservations:${meal[0].max_reservations}</li>
    <li><strong>Price</strong>:${meal[0].price}</li> `
           root.appendChild(ul);
-          rednerReviews();
+          ;
 
         })
 
@@ -96,7 +96,7 @@ function mealsId(req, router) {
           });
         }
   
-  
+  rednerReviews();
 }
 
 
