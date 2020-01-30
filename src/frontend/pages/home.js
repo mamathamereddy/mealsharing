@@ -9,7 +9,7 @@ function homeRouter(req, router) {
         
         <div class="collapse navbar-collapse ml-sm-auto" id="navbarSupportedContent"> 
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item "><a class="nav-link" href="/meals">Find a meal</a></li>
+            <li class="nav-item "><a class="nav-link" href="#root">Find a meal</a></li>
             <li class="nav-item"><a class="nav-link" href="/add-meal">Host a meal </a></li>
           </ul>
         </div>
@@ -23,7 +23,7 @@ function homeRouter(req, router) {
     
     <h1 class="card-title" style=color:white;margin-top:45px>LET'S EAT</h5>
     <p style=color:white>Discover home cooking in 150+ countries</p>
- <a href="#" class="btn btn-success">Find a meal</a>
+ <a href="#" class="btn btn-success" href="#root">Find a meal</a>
  
   </div>
 </div>
@@ -41,7 +41,7 @@ function homeRouter(req, router) {
   <div class="card-body">
     <h3 class="card-title">Hungry Yet?</h5>
     <p>See something you like? Have an idea for an amazing meal of your own, or even something chill and casual?</p>
-    <a href="#" class="btn btn-success">Browse a meal</a>     <a href="#" class="btn btn-success">Create a meal</a>
+    <a href="#" class="btn btn-success" href="#root">Browse a meal</a>     <a href="#" class="btn btn-success">Create a meal</a>
   </div>
 </div>`;
 
@@ -55,14 +55,13 @@ function homeRouter(req, router) {
                 const ul = document.createElement("ul");
                 //giving a class name to ul
                 ul.innerHTML = `<div><img class="meal-image"
-              src="https://source.unsplash.com/200x200?${meal.description}"
+              src="https://source.unsplash.com/300x300?${meal.title}"
               alt="${meal.description}"</div> 
                 
    <li><strong>Title</strong>:${meal.title}</li>
    <li><strong>Location</strong>:${meal.location}</li>
-   <li><strong>Date</strong>:${meal.when}</li>
    <li><strong>Price</strong>:${meal.price}$</li>
-   <a class="btn btn-danger mx-3" href="/meals/${meal.id}">Read More</a> `
+   <a class="btn btn-success mx-3" href="/meals/${meal.id}">Read More</a> `
                 root.appendChild(ul);
 
             });

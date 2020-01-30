@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 
 router.use(bodyParser.json());
 // api/meals/ - Returns all meals
-router.get("/api/meals", (request, response) => {
+router.get("/", (request, response) => {
     pool.query(`SELECT * FROM meals`, function(error, results, fields) {
         if (error) {
             return response.send(error);
@@ -28,7 +28,7 @@ router.post('/', (request, response) => {
 });
 
 //Returns meal by id
-router.get('/meals/:id', (request, response) => {
+router.get('/:id', (request, response) => {
     const id = request.params.id;
     pool.query(`SELECT * FROM meals WHERE id = ${id}`, function(error, results, fields) {
         if (error) {
