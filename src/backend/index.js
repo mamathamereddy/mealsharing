@@ -12,6 +12,9 @@ const path = require("path");
 // Serve the built client html
 const buildPath = path.join(__dirname, "../../dist");
 app.use(express.static(buildPath));
+const buildImage = path.join(__dirname, "");
+app.use(express.static(buildPath));
+
 
 
 // Parse URL-encoded bodies (as sent by HTML forms)
