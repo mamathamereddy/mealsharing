@@ -12,8 +12,8 @@ const path = require("path");
 // Serve the built client html
 const buildPath = path.join(__dirname, "../../dist");
 app.use(express.static(buildPath));
-const buildImage = path.join(__dirname, "");
-app.use(express.static(buildPath));
+
+app.use(express.static("public"));
 
 
 

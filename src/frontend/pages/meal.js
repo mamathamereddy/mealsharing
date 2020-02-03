@@ -18,30 +18,11 @@ function mealsId(req, router) {
     
     <div class="col-sm">
     <form>
-    <strong>Intresting!Fill out the form to reserve your meal...</strong>
-    <div class="form-group">
-    <div class="form-group">
-      <label for=" Name">Name:*</label>
-      <input type="text" class="form-control" >
-    </div>
-    <div class="form-group">
-    <div class="form-group">
-      <label for="phonenumber">Phone Number:*</label>
-      <input type="number" class="form-control" id="exampleInputPassword1">
-    </div>
-      <label for="email">Email:*</label>
-      <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-    </div>
-    <label for="number of guest">Number of Persons:*</label>
-      <input type="number" class="form-control" id="exampleInputPassword1">
-    </div>
-    
-    <button type="submit" class="btn btn-primary">Book Now</button>
-  </form>
-    </div>
-  </div>
-</div>
+    <div id="form"></div>
+    <div id="reservation"></div>
+   </form>  
+   </div>
+
 <div class="card text-center" style="background-image: url('https://images.squarespace-cdn.com/content/5cedb390538cc40001d27d0a/1560889677374-4D6Z0XU4BF501WIXRMUO/italianMealIngredients_webDefaultSize.png?content-type=image%2Fpng'); background-size: cover;background-repeat: no-repeat;
   height:300px; width:100%;background-position: center;object-fit: cover; 
   position: relative;">
@@ -50,8 +31,7 @@ function mealsId(req, router) {
     <p>See something you like? Have an idea for an amazing meal of your own, or even something chill and casual?</p>
     <a href="#" class="btn btn-success" href="/api/meals">Browse a meal</a>     <a href="#" class="btn btn-success">Create a meal</a>
   </div>
-</div>
-`;
+</div>`;
   console.log(req.param.id);
   const id = req.param.id;
   fetch(`/api/meals/${id}`)
@@ -70,9 +50,10 @@ function mealsId(req, router) {
                <li><strong>Date</strong>:${meal[0].when}</li>
                <li><strong>Max_Reservations:${meal[0].max_reservations}</li>
                <li><strong>Price</strong>:${meal[0].price}</li> `;
-           root.appendChild(ul);
+      root.appendChild(ul);
     });
-      rednerReviews(req);
+  rednerReviews(req);
+  rednerReservations(req);
 }
 
 function rednerReviews(req) {
@@ -86,17 +67,51 @@ function rednerReviews(req) {
       console.log(root);
       const ul = document.createElement("ul");
       mealreview.appendChild(ul);
+
+      //	const timeToLocalString = new Date(meal.when).toLocaleTimeString();
+      // For the review ratings & filling the stars
+      let starTotal = 5;
+      let ratings;
+      let sum = 0;
+      let starPercentage;
+      let starPercentageRounded;
+      if (review.length > 1) {
+        for (let i = 0; i < review.length; i++) {
+          sum += review[i].numberOfStars;
+        }
+        ratings = sum / review.length;
+        starPercentage = (ratings / starTotal) * 21.25;
+        starPercentageRounded = `${Math.round(starPercentage)}%`;
+      } else {
+        ratings = review[0].stars;
+        starPercentage = (ratings / starTotal) * 21.25;
+        starPercentageRounded = `${Math.round(starPercentage)}%`;
+      }
+
       ul.innerHTML = `<div class="review">
         <div class="card-body" id="r1">
              <h4> &#8212; Reviews &#8212; </h4>
             <h4 class="card-title">${review[0].title}</h4>
-            <p class="card-text"> ${review[0].stars}</p>
+            <div class="stars-outer">
+            <div class="stars-inner" style="width: ${starPercentageRounded}"></div>
+            
             <p class="card-text">${review[0].description}</p>
+
             <p class="card-text"> ${review[0].created_date}</p>
         </div>
     </div>`;
     });
 }
 
+function rednerReservations(req) {
+  console.log(req.param.id);
+  const id = req.param.id;
+  fetch(`/api/meals?availableReservations=true`)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+    });
+}
+
 export default mealsId;
-//<img src="/public/images/stars-${review[0].stars}.png" alt="${{review[0].stars} stars" />
+
