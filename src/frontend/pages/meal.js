@@ -11,21 +11,34 @@ function mealsId(req, router) {
 </nav>
 
   <div  id="mealpage"></div>
-     
-  <div class="container">
-     <div class="row">
-    <div class="col-sm">
-    <div class="card" id="mealdisplaycard">
-    <div class="card-body">
+
+    <div class="card-group"  >
+  <div class="card" style="border:none">
+    <div class="card-body" >
+    <div class="col-sm" id="mealdisplaycard">
     <div id="root"></div>
     <div id="reviews"></div>
     </div>
-  </div>
     </div>
-    
+  </div>
+  <div class="card">
+    <div class="card-body">
     <div class="col-sm">
     <div id="form"></div>
-   </div>
+    </div>
+    </div>
+  </div>
+  
+  </div>
+</div>
+<div class="card text-center" id="footer">
+  <div class="card-body">
+    <h3 class="card-title">Hungry Yet?</h5>
+    <p>See something you like? Have an idea for an amazing meal of your own, or even something chill and casual?</p>
+    <a  class="btn btn-success" href="#featured-meals">Browse a meal</a>     <a href="#" class="btn btn-success">Create a meal</a>
+  </div>
+</div>
+   
 `;
   console.log(req.param.id);
   const id = req.param.id;
@@ -43,9 +56,9 @@ function mealsId(req, router) {
                <h3><strong>${meal[0].title}</strong></h3>
                <p class="card-text">${meal[0].description}</p>
                <p class="card-text"><i class="fas fa-map-marker-alt"></i>${meal[0].location}</p>
-               <p class="card-text"><i class="far fa-calendar-alt"></i>${meal[0].when}</p>
+               <p class="card-text"><i class="far fa-calendar-alt"></i>${new Date(meal[0].when_date).toLocaleString()}</p>
                <p class="card-text"><i class="far fa-user"></i>${meal[0].max_reservations}</p>
-               <p><strong>Price</strong>:${meal[0].price}</p> `;
+               <p><strong>Price</strong>:${meal[0].price}DKK</p> `;
     });
   rednerReviews(req);
   rednerReservations(req);
@@ -73,26 +86,27 @@ function rednerReviews(req) {
           sum += review[i].numberOfStars;
         }
         ratings = sum / review.length;
-        starPercentage = (ratings / starTotal) * 21.25;
+        starPercentage = (ratings / starTotal) * 41.25;
         starPercentageRounded = `${Math.round(starPercentage)}%`;
       } else {
         ratings = review[0].stars;
-        starPercentage = (ratings / starTotal) * 21.25;
+        starPercentage = (ratings / starTotal) * 41.25;
         starPercentageRounded = `${Math.round(starPercentage)}%`;
       }
-
-      ul.innerHTML = `<div class="review">
+      for (let i = 0; i < review.length; i++) {
+        ul.innerHTML = `<div class="review">
         <div class="card-body" id="r1">
              <h4> &#8212; Reviews &#8212; </h4>
-            <h4 class="card-title">${review[0].title}</h4>
+            <h4 class="card-title">${review[i].title}</h4>
             <div class="stars-outer">
             <div class="stars-inner" style="width: ${starPercentageRounded}"></div>
             
-            <p class="card-text">${review[0].description}</p>
+            <p class="card-text">${review[i].description}</p>
 
-            <p class="card-text"> ${review[0].created_date}</p>
+            <p class="card-text"> ${review[i].created_date}</p>
         </div>
     </div>`;
+      }
     });
 }
 
@@ -169,22 +183,22 @@ function rednerReservations(req) {
               .then(data => {
                 console.log(data)
                 reservation.innerHTML = `        
-           your request is submitted sucessfully!
+                <strong>your request is submitted sucessfully!</strong>
           `;
                 name.value = '';
                 phone.value = '';
                 email.value = '';
               })
           } else {
-            reservation.innerHTML = `Please, fill correctly the form.
+            reservation.innerHTML = `<h6><strong>Please, fill correctly the form.</strong></h6>
           `;
           }
         })
       }
       else {
-        form.innerHTML = `Unfortunately, <br />
+        form.innerHTML = `<h6><strong>Unfortunately, <br />
                            we are out of this dish. <br />
-                         Please, try another.`
+                         Please, try another.</strong></h6>`
       }
 
     });

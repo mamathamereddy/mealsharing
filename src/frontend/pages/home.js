@@ -29,7 +29,7 @@ function homeRouter(req, router) {
   <div class="card-body">
     <h3 class="card-title">Hungry Yet?</h5>
     <p>See something you like? Have an idea for an amazing meal of your own, or even something chill and casual?</p>
-    <a  class="btn btn-success" href="#root">Browse a meal</a>     <a href="#" class="btn btn-success">Create a meal</a>
+    <a  class="btn btn-success" href="#featured-meals">Browse a meal</a>     <a href="#" class="btn btn-success">Create a meal</a>
   </div>
 </div>`;
 
@@ -41,12 +41,12 @@ function homeRouter(req, router) {
         const root = document.getElementById("root");
         const ul = document.createElement("ul");
         root.appendChild(ul);
-        ul.innerHTML = `<img class="meal-image"
+        ul.innerHTML = ` <img class="meal-image" 
               src="https://source.unsplash.com/300x300?${meal.title}"  alt="${meal.description}"</div>         
-                   <li><strong>${meal.title}</strong></li>
-                   <li><i class="fas fa-map-marker-alt"></i> ${meal.location}</li>
-                   <li><strong>price:</strong>${meal.price}dkk</li>
-                   <li><i class="far fa-calendar-alt"></i>${new Date(meal.when).toLocaleString()}</li>
+                   <p><strong>${meal.title}</strong></p>
+                   <p><i class="fas fa-map-marker-alt"></i> ${meal.location}</p>
+                   <p><strong>price:</strong>${meal.price}Dkk</p>
+                   <p><i class="far fa-calendar-alt"></i>${new Date(meal.when).toLocaleString()}</p>
                    <a class="btn btn-info mx-3" href="/meals/${meal.id}">Reserve</a> `;
       });
   });
