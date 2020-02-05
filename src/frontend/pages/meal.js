@@ -24,10 +24,7 @@ function mealsId(req, router) {
     </div>
     
     <div class="col-sm">
-    <form>
     <div id="form"></div>
-    <div id="reservation"></div>
-   </form>  
    </div>
 `;
   console.log(req.param.id);
@@ -43,16 +40,15 @@ function mealsId(req, router) {
       ul.innerHTML = `<div><img class="meal-image"
           src="https://source.unsplash.com/400x300?${meal[0].title}"
           alt="${meal[0].title}"</div> 
-               <li><strong>Title</strong>:${meal[0].title}</li>
-               <li><strong>Description</strong>:${meal[0].description}</li>
-               <li><strong>Location</strong>:${meal[0].location}</li>
-               <li><strong>Date</strong>:${meal[0].when}</li>
-               <li><strong>Max_Reservations:${meal[0].max_reservations}</li>
-               <li><strong>Price</strong>:${meal[0].price}</li> `;
-      
+               <h3><strong>${meal[0].title}</strong></h3>
+               <p class="card-text">${meal[0].description}</p>
+               <p class="card-text"><i class="fas fa-map-marker-alt"></i>${meal[0].location}</p>
+               <p class="card-text"><i class="far fa-calendar-alt"></i>${meal[0].when}</p>
+               <p class="card-text"><i class="far fa-user"></i>${meal[0].max_reservations}</p>
+               <p><strong>Price</strong>:${meal[0].price}</p> `;
     });
   rednerReviews(req);
-  
+  rednerReservations(req);
 }
 
 function rednerReviews(req) {
@@ -66,8 +62,6 @@ function rednerReviews(req) {
       console.log(root);
       const ul = document.createElement("ul");
       mealreview.appendChild(ul);
-
-      //	const timeToLocalString = new Date(meal.when).toLocaleTimeString();
       // For the review ratings & filling the stars
       let starTotal = 5;
       let ratings;
@@ -102,15 +96,98 @@ function rednerReviews(req) {
     });
 }
 
+
+function fetchJsonUrl(url) {
+  return fetch(url).then(res => res.json());
+}
+
 function rednerReservations(req) {
+  let availableReservations = 0;
   console.log(req.param.id);
   const id = req.param.id;
-  fetch(`/api/meals?availableReservations=true`)
-    .then(res => res.json())
+  Promise.all([fetchJsonUrl(`/api/meals/${id}`), fetchJsonUrl(`/api/reservations/${id}`)])
     .then(data => {
-      console.log(data);
+      let meals = data[0];
+      let reservations = data[1];
+      availableReservations = (meals[0].max_reservations) - (reservations[0].number_of_guests)
+      console.log(availableReservations)
+
+      if (availableReservations >= 1) {
+        form.innerHTML =
+          `
+           <strong> Do you want to order the meal? <br />
+            Then fill out this form.</strong>
+            <p>Available sports:${availableReservations}</p>
+            <form>
+            <div>
+              <label>Name:</label>
+               <input type="text" name="name" id="name" pattern="[A-Za-z]" required/>
+               </div>
+               <div>
+               <label>Phonenumber:</label>
+               <input type="number" name="phone" id="phone-number" pattern="^\+(?:[0-9] ?){6,14}[0-9]$"{8}" required/>
+               </div>
+               <div>
+               <label>Email:</label>
+                <input type="email" name="email" id="email" required/>
+                </div>
+                <div>
+                <label>How many guests:</label>
+                <input type="number" name="number-of-guests" id="number-of-guests" min="1" max="${availableReservations}" required/>
+                </div>
+                <div><input type="button" value="Submit"></div>
+            
+
+            <div id="reservation"></div>
+            </form>
+
+         `;
+
+        const button = document.querySelector('[type="button"]');
+        button.addEventListener('click', () => {
+
+          const name = document.querySelector('[name="name"]');
+          const phone = document.querySelector('[name="phone"]');
+          const email = document.querySelector('[name="email"]');
+
+          const reservation = document.getElementById('reservation');
+
+          if (name.value !== '' && phone.value !== '' && email.value !== '') {
+            fetch('/api/reservations/', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  "Name": name.value,
+                  "Telephone": phone.value,
+                  "Email": email.value,
+                  "MealId": req.param.id
+                })
+              })
+              .then(res => res.json())
+              .then(data => {
+                console.log(data)
+                reservation.innerHTML = `        
+           your request is submitted sucessfully!
+          `;
+                name.value = '';
+                phone.value = '';
+                email.value = '';
+              })
+          } else {
+            reservation.innerHTML = `Please, fill correctly the form.
+          `;
+          }
+        })
+      }
+      else {
+        form.innerHTML = `Unfortunately, <br />
+                           we are out of this dish. <br />
+                         Please, try another.`
+      }
+
     });
 }
 
 export default mealsId;
-
