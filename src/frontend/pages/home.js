@@ -44,7 +44,8 @@ function homeRouter(req, router) {
         ul.innerHTML = ` <img class="meal-image" 
               src="https://source.unsplash.com/300x300?${meal.title}"  alt="${meal.description}"
               </div>         
-                   <p><strong>${meal.title}</strong></p>
+                   <p><strong><h4>${meal.title}</h4></strong></p>
+                   <p><b>${meal.description}</b></p>
                    <p><i class="fas fa-map-marker-alt"></i> ${meal.location}</p>
                    <p><strong>price:</strong>${meal.price}Dkk</p>
                    <p><i class="far fa-calendar-alt"></i>${new Date(meal.when).toLocaleString()}</p>
