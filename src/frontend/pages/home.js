@@ -49,7 +49,7 @@ function homeRouter(req, router) {
                    <p><i class="fas fa-map-marker-alt"></i> ${meal.location}</p>
                    <p><strong>price:</strong>${meal.price}Dkk</p>
                    <p><i class="far fa-calendar-alt"></i>${new Date(meal.when).toLocaleString()}</p>
-                   <a class="btn btn-success mx-3" href="/meals/${meal.id}"><i class="far fa-user"></i><b>Reserve</strong></b> `;
+                   <a class="btn btn-primary mx-3" href="/meals/${meal.id}"><i class="far fa-user"></i><b>Reserve</strong></a> `;
       });
     });
 }

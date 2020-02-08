@@ -175,7 +175,7 @@ function rednerReservations(req) {
           <label for="inputGuest">Number Of guests&#x2A;</label>
           <input class="form-control" type="number" name="Guest"  id="inputGuest">
         </div>  
-          <button type="button" id="buttonForm" class="btn btn-primary">Reserve</button>
+          <button type="button" id="buttonForm" class="btn btn-primary"><i class="far fa-user"></i>Reserve</button>
             
 
             <div id="reservation"></div>
