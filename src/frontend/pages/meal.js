@@ -5,7 +5,7 @@ function mealsId(req, router) {
   <div class="collapse navbar-collapse ml-sm-auto" id="navbarSupportedContent"> 
     <ul class="navbar-nav ml-auto">
       <li class="nav-item "><a class="nav-link" href="#root">Find a meal</a></li>
-      <li class="nav-item"><a class="nav-link" href="/add-meal">Host a meal </a></li>
+      <li class="nav-item"><a class="nav-link" href="#mealpage">Home </a></li>
     </ul>
   </div>
 </nav>
@@ -35,35 +35,58 @@ function mealsId(req, router) {
   <div class="card-body">
     <h3 class="card-title">Hungry Yet?</h5>
     <p>See something you like? Have an idea for an amazing meal of your own, or even something chill and casual?</p>
-    <a  class="btn btn-success" href="#featured-meals">Browse a meal</a>     <a href="#" class="btn btn-success">Create a meal</a>
+    <a  class="btn btn-success" href="#featured-meals">Browse a meal</a>     <a href="#mealpage" class="btn btn-success">home</a>
   </div>
-</div>
-   
-`;
+</div>`;
   console.log(req.param.id);
   const id = req.param.id;
-  fetch(`/api/meals/${id}`)
-    .then(res => res.json())
-    .then(meal => {
-      console.log(meal);
-      const root = document.getElementById("root");
-      console.log(root);
-      const ul = document.createElement("ul");
-      root.appendChild(ul);
-      ul.innerHTML = `<div><img class="meal-image"
-          src="https://source.unsplash.com/400x300?${meal[0].title}"
-          alt="${meal[0].title}"</div> 
-               <h3><strong>${meal[0].title}</strong></h3>
-               <p class="card-text">${meal[0].description}</p>
-               <p class="card-text"><i class="fas fa-map-marker-alt"></i>${meal[0].location}</p>
-               <p class="card-text"><i class="far fa-calendar-alt"></i>${new Date(meal[0].when_date).toLocaleString()}</p>
-               <p class="card-text"><i class="far fa-user"></i>${meal[0].max_reservations}</p>
-               <p><strong>Price</strong>:${meal[0].price}DKK</p> `;
-    });
+
+  function fetchJsonUrl(url) {
+    return fetch(url).then(res => res.json());
+  }
+
+  // fetching data of meal with id
+  Promise.all([
+    fetchJsonUrl(`/api/meals/${id}`),
+    fetchJsonUrl(`/api/reservations/${id}`)
+  ]).then(mealsData => {
+    console.log(mealsData);
+    let meal = mealsData[0];
+    let reservations = mealsData[1];
+
+    const root = document.getElementById("root");
+    const ul = document.createElement("ul");
+    root.appendChild(ul);
+    let sumOfReservations = 0;
+    if (reservations.length > 1) {
+      for (let i = 0; i < reservations.length; i++) {
+        sumOfReservations += reservations[i].number_of_guests;
+      }
+    } else {
+      sumOfReservations = reservations[0].number_of_guests;
+    }
+
+    const availableReservations = meal[0].max_reservations - sumOfReservations;
+
+    ul.innerHTML = `<div><img class="meal-image"
+      src="https://source.unsplash.com/400x300?${meal[0].title}"
+       alt="${meal[0].title}"</div> 
+       <h3><strong>${meal[0].title}</strong></h3>
+       <p class="card-text">${meal[0].description}</p>
+       <p class="card-text"><i class="fas fa-map-marker-alt"></i>${
+         meal[0].location
+       }</p>
+       <p class="card-text"><i class="far fa-calendar-alt"></i>${new Date(
+         meal[0].when
+       ).toLocaleString()}</p>
+       <p class="card-text"><i class="far fa-user"></i>${availableReservations}</p>
+       <p><strong>Price</strong>:${meal[0].price}DKK</p> `;
+  });
   rednerReviews(req);
   rednerReservations(req);
 }
 
+//fetching the reviews of id
 function rednerReviews(req) {
   console.log(req.param.id);
   const id = req.param.id;
@@ -102,15 +125,16 @@ function rednerReviews(req) {
             <div class="stars-inner" style="width: ${starPercentageRounded}"></div>
             
             <p class="card-text">${review[i].description}</p>
-
-            <p class="card-text"> ${review[i].created_date}</p>
+            <p class="card-text"> ${new Date(
+              review[i].created_date
+            ).toLocaleString()}</p>
         </div>
     </div>`;
       }
     });
 }
 
-
+//reservation form 
 function fetchJsonUrl(url) {
   return fetch(url).then(res => res.json());
 }
@@ -119,37 +143,39 @@ function rednerReservations(req) {
   let availableReservations = 0;
   console.log(req.param.id);
   const id = req.param.id;
-  Promise.all([fetchJsonUrl(`/api/meals/${id}`), fetchJsonUrl(`/api/reservations/${id}`)])
-    .then(data => {
-      let meals = data[0];
-      let reservations = data[1];
-      availableReservations = (meals[0].max_reservations) - (reservations[0].number_of_guests)
-      console.log(availableReservations)
+  Promise.all([
+    fetchJsonUrl(`/api/meals/${id}`),
+    fetchJsonUrl(`/api/reservations/${id}`)
+  ]).then(data => {
+    let meals = data[0];
+    let reservations = data[1];
+    availableReservations =
+      meals[0].max_reservations - reservations[0].number_of_guests;
+    console.log(availableReservations);
 
-      if (availableReservations >= 1) {
-        form.innerHTML =
-          `
-           <strong> Do you want to order the meal? <br />
-            Then fill out this form.</strong>
+    if (availableReservations >= 1) {
+      form.innerHTML = `
+           <strong>Intrested? <br />
+            Fill out the form to grab a spot</strong>
             <p>Available sports:${availableReservations}</p>
-            <form>
-            <div>
-              <label>Name:</label>
-               <input type="text" name="name" id="name" pattern="[A-Za-z]" required/>
-               </div>
-               <div>
-               <label>Phonenumber:</label>
-               <input type="number" name="phone" id="phone-number" pattern="^\+(?:[0-9] ?){6,14}[0-9]$"{8}" required/>
-               </div>
-               <div>
-               <label>Email:</label>
-                <input type="email" name="email" id="email" required/>
-                </div>
-                <div>
-                <label>How many guests:</label>
-                <input type="number" name="number-of-guests" id="number-of-guests" min="1" max="${availableReservations}" required/>
-                </div>
-                <div><input type="button" value="Submit"></div>
+            <div class="form-group">
+            <label for="inputName">Name&#x2A;</label>
+            <input class="form-control" type="text" name="name" id="inputName">
+          </div>
+          <div class="form-group">
+          <label for="inputPhone">Phone Number&#x2A;</label>
+          <input class="form-control" type="text" name="phone" id="inputPhone">
+        </div>
+            <div class="form-group">
+              <label for="inputEmail1">Email address&#x2A;</label>
+              <input class="form-control" type="email" name="email" id="inputEmail1" aria-describedby="emailHelp">
+              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+          <div class="form-group">
+          <label for="inputGuest">Number Of guests&#x2A;</label>
+          <input class="form-control" type="number" name="Guest"  id="inputGuest">
+        </div>  
+          <button type="button" id="buttonForm" class="btn btn-primary">Reserve</button>
             
 
             <div id="reservation"></div>
@@ -157,51 +183,54 @@ function rednerReservations(req) {
 
          `;
 
-        const button = document.querySelector('[type="button"]');
-        button.addEventListener('click', () => {
+      const button = document.querySelector('[type="button"]');
+      button.addEventListener("click", () => {
+        const name = document.querySelector('[name="name"]');
+        const phone = document.querySelector('[name="phone"]');
+        const email = document.querySelector('[name="email"]');
+        const numberOfGuests = document.querySelector('[name="Guest"]');
 
-          const name = document.querySelector('[name="name"]');
-          const phone = document.querySelector('[name="phone"]');
-          const email = document.querySelector('[name="email"]');
-
-          const reservation = document.getElementById('reservation');
-
-          if (name.value !== '' && phone.value !== '' && email.value !== '') {
-            fetch('/api/reservations/', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  "Name": name.value,
-                  "Telephone": phone.value,
-                  "Email": email.value,
-                  "MealId": req.param.id
-                })
-              })
-              .then(res => res.json())
-              .then(data => {
-                console.log(data)
-                reservation.innerHTML = `        
-                <strong>your request is submitted sucessfully!</strong>
+        if (
+          name.value !== "" &&
+          phone.value !== "" &&
+          email.value !== "" &&
+          numberOfGuests !== ""
+        ) {
+          fetch("/api/reservations/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              Name: name.value,
+              Telephone: phone.value,
+              Email: email.value,
+              MealId: req.param.id,
+              numberOfGuests: numberOfGuests.value
+            })
+          })
+            .then(res => res.json())
+            .then(data => {
+              console.log(data);
+              reservation.innerHTML = `        
+                <strong>your order is submitted sucessfully!</strong>
           `;
-                name.value = '';
-                phone.value = '';
-                email.value = '';
-              })
-          } else {
-            reservation.innerHTML = `<h6><strong>Please, fill correctly the form.</strong></h6>
+              name.value = "";
+              phone.value = "";
+              email.value = "";
+              numberOfGuests.value = "";
+            });
+        } else {
+          reservation.innerHTML = `<h6><strong>Please, fill the form correctly</strong></h6>
           `;
-          }
-        })
-      }
-      else {
-        form.innerHTML = `<h6><strong>Unfortunately, <br />
+        }
+      });
+    } else {
+      form.innerHTML = `<h6><strong>Sorry, <br />
                            we are out of this dish. <br />
-                         Please, try another.</strong></h6>`
-      }
-
-    });
+                         Please, try another.</strong></h6>`;
+    }
+  });
 }
 
 export default mealsId;

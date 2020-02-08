@@ -16,7 +16,7 @@ router.get ('/', (request, response) => {
   });
 });
 
-//Adds a new reservation
+///Adds a new reservation
 router.post ('/', (request, response) => {
   const newReservation = request.body;
   pool.query ('INSERT into reservations SET ?',newReservation,function(error, results, fields){
@@ -25,7 +25,7 @@ router.post ('/', (request, response) => {
       }
       response.json (results);
     });
-});
+}); 
 
 //Returns reservation by id
 router.get ('/:id', (request, response) => {
@@ -66,5 +66,52 @@ router.delete ('/:id', (request, response) => {
     res.send (`reservations with id ${id} has been deleted!`);
   });
 });
+
+//post
+/*
+class Reservation {
+  constructor(reservationObj) {
+    if(!reservationObj.name)
+      throw "reservation need to have name";
+       else 
+      this.name = reservationObj.name;
+    if(!reservationObj.phone)
+      throw "reservation need to have phone number";
+      else
+      this.phone = reservationObj.phone;
+    if(!reservationObj.email)
+      throw "reservation need to have email";
+      else
+      this.email = reservationObj.email;
+  if(!reservationObj.mealId)
+      throw "reservation need to have mealId";
+      else
+      this.mealId = reservationObj.mealId;
+
+  if(!reservationObj.numberOfGuests)
+      throw "reservation need to have numberOfGuest";
+      else
+      this.numberOfGuests = reservationObj.numberOfGuests;
+  } 
+}
+
+router.post('/add-reservation', (req, res) => {
+  let reservation;
+   try {
+      reservation = new Reservation (req.body);
+      console.log(reservation);
+    } catch (e) {
+      return res.json(e);
+    }
+  pool.query("INSERT INTO reservation SET ?", reservation, (error, results, fields) => {
+    if(error) {
+        return res.send(error)
+    } else {
+        res.json("Reservation added successfully")
+    }
+  })
+}) 
+*/
+
 
 module.exports = router;
