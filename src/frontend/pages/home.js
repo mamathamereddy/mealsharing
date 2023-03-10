@@ -52,7 +52,7 @@ function homeRouter(req, router) {
                    <p><i class="fas fa-map-marker-alt"></i>  ${
                      meal.location
                    }</p>
-                   <p><strong>price:</strong> ${meal.price}Dkk</p>
+                   <p><strong>price:</strong> ${meal.price} Dkk</p>
                    <p><i class="far fa-calendar-alt"></i> ${
                      new Date(meal.when).toLocaleString().split(" ")[0]
                    }</p>

@@ -42,14 +42,14 @@ function mealsId(req, router) {
   const id = req.param.id;
 
   function fetchJsonUrl(url) {
-    return fetch(url).then(res => res.json());
+    return fetch(url).then((res) => res.json());
   }
 
   // fetching data of meal with id
   Promise.all([
     fetchJsonUrl(`/api/meals/${id}`),
-    fetchJsonUrl(`/api/reservations/${id}`)
-  ]).then(mealsData => {
+    fetchJsonUrl(`/api/reservations/${id}`),
+  ]).then((mealsData) => {
     console.log(mealsData);
     let meal = mealsData[0];
     let reservations = mealsData[1];
@@ -71,16 +71,16 @@ function mealsId(req, router) {
     ul.innerHTML = `<div><img class="meal-image"
       src="https://source.unsplash.com/400x300?${meal[0].title}"
        alt="${meal[0].title}"</div> 
-       <h3><strong>${meal[0].title}</strong></h3>
-       <p class="card-text">${meal[0].description}</p>
-       <p class="card-text"><i class="fas fa-map-marker-alt"></i>${
+       <h3><strong> ${meal[0].title}</strong></h3>
+       <p class="card-text"> ${meal[0].description}</p>
+       <p class="card-text"><i class="fas fa-map-marker-alt"></i> ${
          meal[0].location
        }</p>
-       <p class="card-text"><i class="far fa-calendar-alt"></i>${new Date(
-         meal[0].when
-       ).toLocaleString()}</p>
-       <p class="card-text"><i class="far fa-user"></i>${availableReservations}</p>
-       <p><strong>Price</strong>:${meal[0].price}DKK</p> `;
+       <p class="card-text"><i class="far fa-calendar-alt"></i> ${
+         new Date(meal[0].when).toLocaleString().split(" ")[0]
+       }</p>
+       <p class="card-text"><i class="far fa-user"></i> ${availableReservations}</p>
+       <p><strong>Price</strong>: ${meal[0].price} DKK</p> `;
   });
   rednerReviews(req);
   rednerReservations(req);
@@ -91,8 +91,8 @@ function rednerReviews(req) {
   console.log(req.param.id);
   const id = req.param.id;
   fetch(`/api/reviews/${id}`)
-    .then(res => res.json())
-    .then(review => {
+    .then((res) => res.json())
+    .then((review) => {
       console.log(review);
       const mealreview = document.getElementById("reviews");
       console.log(root);
@@ -124,8 +124,8 @@ function rednerReviews(req) {
             <div class="stars-outer">
             <div class="stars-inner" style="width: ${starPercentageRounded}"></div>
             
-            <p class="card-text">${review[i].description}</p>
-            <p class="card-text"> ${new Date(
+            <p class="card-text"> ${review[i].description}</p>
+            <p class="card-text">  ${new Date(
               review[i].created_date
             ).toLocaleString()}</p>
         </div>
@@ -134,9 +134,9 @@ function rednerReviews(req) {
     });
 }
 
-//reservation form 
+//reservation form
 function fetchJsonUrl(url) {
-  return fetch(url).then(res => res.json());
+  return fetch(url).then((res) => res.json());
 }
 
 function rednerReservations(req) {
@@ -145,8 +145,8 @@ function rednerReservations(req) {
   const id = req.param.id;
   Promise.all([
     fetchJsonUrl(`/api/meals/${id}`),
-    fetchJsonUrl(`/api/reservations/${id}`)
-  ]).then(data => {
+    fetchJsonUrl(`/api/reservations/${id}`),
+  ]).then((data) => {
     let meals = data[0];
     let reservations = data[1];
     availableReservations =
@@ -157,7 +157,7 @@ function rednerReservations(req) {
       form.innerHTML = `
            <strong>Intrested? <br />
             Fill out the form to grab a spot</strong>
-            <p>Available sports:${availableReservations}</p>
+            <p>Available sports : ${availableReservations}</p>
             <div class="form-group">
             <label for="inputName">Name&#x2A;</label>
             <input class="form-control" type="text" name="name" id="inputName">
@@ -199,18 +199,18 @@ function rednerReservations(req) {
           fetch("/api/reservations/", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               Name: name.value,
               Telephone: phone.value,
               Email: email.value,
               MealId: req.param.id,
-              numberOfGuests: numberOfGuests.value
-            })
+              numberOfGuests: numberOfGuests.value,
+            }),
           })
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
               console.log(data);
               reservation.innerHTML = `        
                 <strong>your order is submitted sucessfully!</strong>
