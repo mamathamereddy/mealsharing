@@ -34,25 +34,32 @@ function homeRouter(req, router) {
 </div>`;
 
   fetch("/api/meals")
-    .then(res => res.json())
-    .then(meals => {
+    .then((res) => res.json())
+    .then((meals) => {
       console.log(meals);
-      meals.map(meal => {
+      meals.map((meal) => {
         const root = document.getElementById("root");
         const ul = document.createElement("ul");
         root.appendChild(ul);
-        ul.innerHTML = ` <img class="meal-image" 
-              src="https://source.unsplash.com/300x300?${meal.title}"  alt="${meal.description}"
+        ul.innerHTML = `  <a href="/meals/${meal.id}"><img class="meal-image" 
+              src="https://source.unsplash.com/300x300?${meal.title}"  alt="${
+          meal.description
+        }"
+              </a>
               </div>         
-                   <p><strong><h4>${meal.title}</h4></strong></p>
-                   <p><b>${meal.description}</b></p>
-                   <p><i class="fas fa-map-marker-alt"></i> ${meal.location}</p>
-                   <p><strong>price:</strong>${meal.price}Dkk</p>
-                   <p><i class="far fa-calendar-alt"></i>${new Date(meal.when).toLocaleString()}</p>
-                   <a class="btn btn-primary mx-3" href="/meals/${meal.id}"><i class="far fa-user"></i><b>Reserve</strong></a> `;
+                   <p><strong><h4> ${meal.title.toUpperCase()}</h4></strong></p>
+               
+                   <p><i class="fas fa-map-marker-alt"></i>  ${
+                     meal.location
+                   }</p>
+                   <p><strong>price:</strong> ${meal.price}Dkk</p>
+                   <p><i class="far fa-calendar-alt"></i> ${
+                     new Date(meal.when).toLocaleString().split(" ")[0]
+                   }</p>
+                   <a class="btn btn-primary mx-3" href="/meals/ ${
+                     meal.id
+                   }"><i class="far fa-user"></i><b>Reserve</strong></a> `;
       });
     });
 }
 export default homeRouter;
-
-
